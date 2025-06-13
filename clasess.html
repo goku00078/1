@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YOU FOOL</title>
+  <style>
+    body {
+      background-image: url("https://i.pinimg.com/736x/75/a6/10/75a6108c2c99f27ab79ec43479a067aa.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      color: white;
+      text-shadow:
+        -2px -2px 0 black,
+         2px -2px 0 black,
+        -2px  2px 0 black,
+         2px  2px 0 black;
+    }
+
+    .center-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      height: 50vh;
+    }
+
+    .note {
+      font-size: 120%;
+      color: red;
+    }
+
+    .city {
+      background-color: rgba(255, 99, 71, 0.7);
+      color: white;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .center-text {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: red;
+      margin-top: 40px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: red;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 60px;
+      padding: 20px 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+    }
+
+    #hacked-message {
+      display: none;
+      text-align: center;
+      color: red;
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: 40px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🎯 First Centered Block -->
+<div class="center-section">
+  <h1>My <span class="note">Important</span> Doc!!</h1>
+  <p>you can't<span class="note"> acsess</span> this one Byeeeeee!!!!!!!</p>
+</div>
+
+<h2 class="city">Paris</h2>
+<p class="city">Paris is the capital of France.</p>
+
+<h2 class="city">London</h2>
+<p class="city">London is the capital of England.</p>
+
+<h2 class="city">Tokyo</h2>
+<p class="city">Tokyo is the capital of Japan.</p>
+
+<!-- 🎯 Second Centered Block -->
+<div class="center-section" style="height: auto; margin-top: 40px;">
+  <h2>Choose one city to find me</h2>
+  <p>Click the button to hide all "city":</p>
+  <button onclick="myFunction()">Find Him</button>
+</div>
+
+<h2 class="city">London</h2>
+<p class="city">London is the capital of England.</p>
+
+<h2 class="city">Paris</h2>
+<p class="city">Paris is the capital of France.</p>
+
+<h2 class="city">Tokyo</h2>
+<p class="city">Tokyo is the capital of Japan.</p>
+
+<!-- 🎯 Hacked Message -->
+<div id="hacked-message">CONGRATULATIONS, YOU ARE HACKED</div>
+
+<p class="center-text">YOU FOOL</p>
+
+<!-- ✅ Custom Footer -->
+<div class="footer">
+  © 2025 | SADHU Web Creations | All Rights Reserved. | Built with Style. Powered by Madness.
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementsByClassName("city");
+  for (var i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  alert("CONGRATULATIONS, YOU ARE HACKED");
+  document.getElementById("hacked-message").style.display = "block";
+}
+</script>
+
+</body>
+</html>
