@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Password Manager</title>
+  <style>
+    body {
+      background: #0f0f0f;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-box {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 360px;
+      box-sizing: border-box;
+    }
+    h2 {
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      color: #fff;
+      font-size: 14px;
+    }
+    input::placeholder {
+      color: #aaa;
+    }
+    button {
+      background-color: #3f73ff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #295ddc;
+    }
+    .msg {
+      text-align: center;
+      color: lightgreen;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-box">
+    <h2>🔐 Register / Login</h2>
+    <input id="userId" placeholder="User ID">
+    <input id="loginPass" type="password" placeholder="Login Password">
+    <input id="masterPass" type="password" placeholder="Master Password">
+    <input id="favCar" placeholder="Favorite Car (Security)">
+    <button onclick="registerUser()">Register</button>
+    <button onclick="loginUser()">Login</button>
+    <p class="msg" id="status"></p>
+  </div>
+
+  <script>
+    function encrypt(text) {
+      return btoa(text); // simple base64 for demo
+    }
+    function decrypt(text) {
+      return atob(text);
+    }
+
+    function registerUser() {
+      const userId = document.getElementById('userId').value;
+      const loginPass = encrypt(document.getElementById('loginPass').value);
+      const masterPass = encrypt(document.getElementById('masterPass').value);
+      const favCar = encrypt(document.getElementById('favCar').value);
+
+      const data = {
+        loginPass,
+        masterPass,
+        favCar
+      };
+
+      localStorage.setItem(user_${userId}, JSON.stringify(data));
+      document.getElementById('status').textContent = "✅ Registered successfully!";
+    }
+
+    function loginUser() {
+      const userId = document.getElementById('userId').value;
+      const loginPass = document.getElementById('loginPass').value;
+
+      const saved = localStorage.getItem(user_${userId});
+      if (!saved) {
+        document.getElementById('status').textContent = "❌ User not found!";
+        return;
+      }
+
+      const parsed = JSON.parse(saved);
+      if (decrypt(parsed.loginPass) === loginPass) {
+        document.getElementById('status').textContent = ✅ Welcome ${userId}!;
+      } else {
+        document.getElementById('status').textContent = "❌ Incorrect password.";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+
