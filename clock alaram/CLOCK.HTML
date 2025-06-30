@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Digital Clock with Alarm + Goku</title>
   <style>
     :root {
@@ -121,37 +121,16 @@
       100% { transform: scale(1); }
     }
 
-    /* 🏃 Characters */
-    .runner {
+    /* Bottom Goku */
+    .goku-bottom {
       position: absolute;
-      width: 60px;
-      height: auto;
-      z-index: 1;
-    }
-
-    .runner-chibi {
-      animation: runAround 12s linear infinite;
-    }
-
-    .runner-goku {
-      width: 80px;
-      animation: runReverse 14s linear infinite;
-    }
-
-    @keyframes runAround {
-      0%   { top: 20px; left: 20px; transform: scaleX(1); }
-      25%  { top: 20px; left: calc(100% - 80px); transform: scaleX(1); }
-      50%  { top: calc(100% - 80px); left: calc(100% - 80px); transform: scaleX(-1); }
-      75%  { top: calc(100% - 80px); left: 20px; transform: scaleX(-1); }
-      100% { top: 20px; left: 20px; transform: scaleX(1); }
-    }
-
-    @keyframes runReverse {
-      0%   { top: calc(100% - 80px); left: 20px; transform: scaleX(1); }
-      25%  { top: calc(100% - 80px); left: calc(100% - 80px); transform: scaleX(1); }
-      50%  { top: 20px; left: calc(100% - 80px); transform: scaleX(-1); }
-      75%  { top: 20px; left: 20px; transform: scaleX(-1); }
-      100% { top: calc(100% - 80px); left: 20px; transform: scaleX(1); }
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -161,22 +140,20 @@
   <div class="clock" id="clock">00:00:00</div>
 
   <div class="alarm-controls">
-    <input type="time" id="alarmTime">
+    <input type="time" id="alarmTime" />
     <button onclick="addAlarm()">Add Alarm</button>
     <button onclick="stopAlarm()">Stop Alarm</button>
     <button onclick="snoozeAlarm()">Snooze</button>
     <ul id="alarmsList"></ul>
   </div>
 
-  <!-- Alarm popup -->
   <div id="fullscreenAlert" class="fullscreen-alarm">
     🔔 Alarm!
     <button onclick="stopAlarm()" class="stop-button">Stop</button>
   </div>
 
-  <!-- 👧 Anime runners -->
-  <img src="https://media.tenor.com/8xkibFjNLVYAAAAi/chibi-anime.gif" alt="Running Kid" class="runner runner-chibi">
-  <img src="goku-dragon-ball.gif" alt="Goku Running" class="runner runner-goku">
+  <!-- Bottom Goku Fight -->
+  <img src="goku-fight-stance.gif" alt="Fighting Goku" class="goku-bottom" />
 
   <audio id="alarmAudio" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" preload="auto"></audio>
 
@@ -192,15 +169,14 @@
 
     function updateClock() {
       const now = new Date();
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
       const istOffset = 5.5 * 60 * 60 * 1000;
       const istTime = new Date(utc + istOffset);
 
-      const h = istTime.getHours().toString().padStart(2, '0');
-      const m = istTime.getMinutes().toString().padStart(2, '0');
-      const s = istTime.getSeconds().toString().padStart(2, '0');
-      const timeStr = `${h}:${m}:${s}`;
-      clock.textContent = timeStr;
+      const h = istTime.getHours().toString().padStart(2, "0");
+      const m = istTime.getMinutes().toString().padStart(2, "0");
+      const s = istTime.getSeconds().toString().padStart(2, "0");
+      clock.textContent = `${h}:${m}:${s}`;
 
       const currentTime = `${h}:${m}`;
       if (alarms.includes(currentTime) && !isRinging) {
