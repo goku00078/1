@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Digital Clock with Alarm + Goku</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --text: white;
+      --primary: #1e88e5;
+      --hover: #1565c0;
+    }
+
+    body.light {
+      --bg: #f5f5f5;
+      --text: #111;
+      --primary: #1976d2;
+      --hover: #0d47a1;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .clock {
+      font-size: 48px;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+
+    .alarm-controls {
+      text-align: center;
+      z-index: 2;
+    }
+
+    input[type="time"] {
+      padding: 8px;
+      font-size: 16px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 8px 16px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: var(--hover);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .fullscreen-alarm {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: white;
+      font-size: 72px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+    }
+
+    .stop-button {
+      margin-top: 20px;
+      padding: 16px 32px;
+      font-size: 24px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      animation: pulse 1s infinite;
+    }
+
+    .stop-button:hover {
+      background-color: darkred;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* 🏃 Characters */
+    .runner {
+      position: absolute;
+      width: 60px;
+      height: auto;
+      z-index: 1;
+    }
+
+    .runner-chibi {
+      animation: runAround 12s linear infinite;
+    }
+
+    .runner-goku {
+      width: 80px;
+      animation: runReverse 14s linear infinite;
+    }
+
+    @keyframes runAround {
+      0%   { top: 20px; left: 20px; transform: scaleX(1); }
+      25%  { top: 20px; left: calc(100% - 80px); transform: scaleX(1); }
+      50%  { top: calc(100% - 80px); left: calc(100% - 80px); transform: scaleX(-1); }
+      75%  { top: calc(100% - 80px); left: 20px; transform: scaleX(-1); }
+      100% { top: 20px; left: 20px; transform: scaleX(1); }
+    }
+
+    @keyframes runReverse {
+      0%   { top: calc(100% - 80px); left: 20px; transform: scaleX(1); }
+      25%  { top: calc(100% - 80px); left: calc(100% - 80px); transform: scaleX(1); }
+      50%  { top: 20px; left: calc(100% - 80px); transform: scaleX(-1); }
+      75%  { top: 20px; left: 20px; transform: scaleX(-1); }
+      100% { top: calc(100% - 80px); left: 20px; transform: scaleX(1); }
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-theme" onclick="toggleTheme()">🌓 Toggle Mode</button>
+
+  <div class="clock" id="clock">00:00:00</div>
+
+  <div class="alarm-controls">
+    <input type="time" id="alarmTime">
+    <button onclick="addAlarm()">Add Alarm</button>
+    <button onclick="stopAlarm()">Stop Alarm</button>
+    <button onclick="snoozeAlarm()">Snooze</button>
+    <ul id="alarmsList"></ul>
+  </div>
+
+  <!-- Alarm popup -->
+  <div id="fullscreenAlert" class="fullscreen-alarm">
+    🔔 Alarm!
+    <button onclick="stopAlarm()" class="stop-button">Stop</button>
+  </div>
+
+  <!-- 👧 Anime runners -->
+  <img src="https://media.tenor.com/8xkibFjNLVYAAAAi/chibi-anime.gif" alt="Running Kid" class="runner runner-chibi">
+  <img src="goku-dragon-ball.gif" alt="Goku Running" class="runner runner-goku">
+
+  <audio id="alarmAudio" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" preload="auto"></audio>
+
+  <script>
+    const clock = document.getElementById("clock");
+    const alarmAudio = document.getElementById("alarmAudio");
+    const alarmsList = document.getElementById("alarmsList");
+    const fullscreenAlert = document.getElementById("fullscreenAlert");
+
+    let alarms = [];
+    let activeAlarm = null;
+    let isRinging = false;
+
+    function updateClock() {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const istOffset = 5.5 * 60 * 60 * 1000;
+      const istTime = new Date(utc + istOffset);
+
+      const h = istTime.getHours().toString().padStart(2, '0');
+      const m = istTime.getMinutes().toString().padStart(2, '0');
+      const s = istTime.getSeconds().toString().padStart(2, '0');
+      const timeStr = `${h}:${m}:${s}`;
+      clock.textContent = timeStr;
+
+      const currentTime = `${h}:${m}`;
+      if (alarms.includes(currentTime) && !isRinging) {
+        alarmAudio.play();
+        isRinging = true;
+        activeAlarm = currentTime;
+        fullscreenAlert.style.display = "flex";
+      }
+    }
+
+    function addAlarm() {
+      const alarmInput = document.getElementById("alarmTime");
+      const time = alarmInput.value;
+      if (time && !alarms.includes(time)) {
+        alarms.push(time);
+        renderAlarms();
+        alarmInput.value = "";
+      }
+    }
+
+    function stopAlarm() {
+      if (activeAlarm) {
+        const index = alarms.indexOf(activeAlarm);
+        if (index !== -1) {
+          alarms.splice(index, 1);
+          renderAlarms();
+        }
+      }
+      alarmAudio.pause();
+      alarmAudio.currentTime = 0;
+      isRinging = false;
+      fullscreenAlert.style.display = "none";
+      activeAlarm = null;
+    }
+
+    function snoozeAlarm() {
+      if (isRinging && activeAlarm) {
+        stopAlarm();
+        const [h, m] = activeAlarm.split(":").map(Number);
+        const snoozeDate = new Date();
+        snoozeDate.setHours(h);
+        snoozeDate.setMinutes(m + 5);
+        const newH = snoozeDate.getHours().toString().padStart(2, '0');
+        const newM = snoozeDate.getMinutes().toString().padStart(2, '0');
+        const snoozeTime = `${newH}:${newM}`;
+        alarms.push(snoozeTime);
+        renderAlarms();
+        alert(`😴 Snoozed for 5 minutes (next alarm at ${snoozeTime})`);
+        activeAlarm = null;
+      }
+    }
+
+    function deleteAlarm(index) {
+      alarms.splice(index, 1);
+      renderAlarms();
+    }
+
+    function renderAlarms() {
+      alarmsList.innerHTML = alarms.map((alarm, index) =>
+        `<li>${alarm} <button onclick="deleteAlarm(${index})">Remove</button></li>`
+      ).join('');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
