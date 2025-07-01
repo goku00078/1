@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Login System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .form-box {
+      background: white;
+      padding: 30px;
+      max-width: 300px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1565c0;
+    }
+
+    #welcome {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-box" id="registerBox">
+    <h2>Register</h2>
+    <input type="text" id="regUsername" placeholder="Username" required>
+    <input type="password" id="regPassword" placeholder="Password" required>
+    <button onclick="register()">Register</button>
+  </div>
+
+  <div class="form-box" id="loginBox">
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="welcome" style="display:none;"></div>
+  <button id="logoutBtn" onclick="logout()" style="display:none; margin-top: 10px;">Logout</button>
+
+  <script>
+    function register() {
+      const username = document.getElementById("regUsername").value;
+      const password = document.getElementById("regPassword").value;
+
+      if (username && password) {
+        const user = { username, password };
+        localStorage.setItem("user", JSON.stringify(user));
+        alert("User registered successfully!");
+      } else {
+        alert("Please fill both fields.");
+      }
+    }
+
+    function login() {
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+
+      if (storedUser && username === storedUser.username && password === storedUser.password) {
+        document.getElementById("welcome").style.display = "block";
+        document.getElementById("welcome").innerText = `Welcome, ${username}!`;
+        document.getElementById("logoutBtn").style.display = "inline-block";
+        document.getElementById("registerBox").style.display = "none";
+        document.getElementById("loginBox").style.display = "none";
+      } else {
+        alert("Invalid username or password");
+      }
+    }
+
+    function logout() {
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("registerBox").style.display = "block";
+      document.getElementById("loginBox").style.display = "block";
+    }
+  </script>
+</body>
+</html>
